@@ -3,8 +3,12 @@ session_start();
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
-// Cek login
-cek_login();
+// Cek login - menggunakan sesi login_utama alih-alih sesi admin
+if (!isset($_SESSION['admin_id'])) {
+    // Redirect ke halaman login utama jika belum login
+    header("Location: ../index.php");
+    exit();
+}
 
 $message = '';
 
@@ -57,6 +61,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 
 // Mendapatkan daftar buku
 $books = get_all_books();
+
+// Mendapatkan informasi anggota yang sedang login
+$admin_id = $_SESSION['admin_id'];
+$query_admin = "SELECT * FROM admin WHERE id = '$admin_id'";
+$result_admin = mysqli_query($conn, $query_admin);
+$admin = mysqli_fetch_assoc($result_admin);
 ?>
 
 <!DOCTYPE html>
@@ -70,19 +80,26 @@ $books = get_all_books();
 <body>
     <header>
         <div class="container">
-            <h1>Dashboard Admin</h1>
+            <h1>Dashboard Perpustakaan</h1>
             <nav>
                 <ul>
-                    <li><a href="index.php">Dashboard</a></li>
+                    <li><a href="dashboard.php">Dashboard</a></li>
                     <li><a href="tambah_buku.php">Tambah Buku</a></li>
                     <li><a href="laporan.php">Laporan</a></li>
-                    <li><a href="logout.php">Logout</a></li>
+                    <li><a href="../dashboard_utama.php">Halaman Utama</a></li>
                 </ul>
             </nav>
         </div>
     </header>
     
     <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Selamat Datang, <?php echo $admin['nama']; ?></h2>
+            </div>
+            <p>Dari halaman ini Anda dapat menambahkan buku baru dan mengelola daftar buku yang ada.</p>
+        </div>
+        
         <?php echo $message; ?>
         
         <div class="card">
@@ -161,7 +178,7 @@ $books = get_all_books();
                                 <td><?php echo $book['total_stok']; ?></td>
                                 <td><?php echo $book['jumlah_tersedia']; ?></td>
                                 <td>
-                                    <a href="tambah_buku.php?action=delete&id=<?php echo $book['id']; ?>" class="btn btn-danger" onclick="return confirmDelete('Yakin ingin menghapus buku ini?');">Hapus</a>
+                                    <a href="tambah_buku.php?action=delete&id=<?php echo $book['id']; ?>" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus buku ini?');">Hapus</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

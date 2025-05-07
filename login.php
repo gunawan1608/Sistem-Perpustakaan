@@ -1,57 +1,58 @@
 <?php
 session_start();
-require_once 'config/database.php';
 
-// Redirect jika sudah login
+// Jika sudah login, langsung redirect ke dashboard
 if (isset($_SESSION['admin_id'])) {
-    header("Location: admin/index.php");
-    exit();
+    header("Location: dashboard_utama.php");
+    exit;
 }
 
-$message = '';
+// Koneksi database
+$conn = mysqli_connect("localhost", "root", "", "perpustakaan");
 
-// Proses login
-if (isset($_POST['login'])) {
+// Cek koneksi
+if (!$conn) {
+    die("Koneksi gagal: " . mysqli_connect_error());
+}
+
+$error = "";
+
+// Jika form disubmit
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
     
-    $query = "SELECT * FROM admin WHERE username = '$username'";
-    $result = mysqli_query($conn, $query);
-    
-    if (mysqli_num_rows($result) > 0) {
-        $user = mysqli_fetch_assoc($result);
-        
-        // Verifikasi password
-        if (password_verify($password, $user['password'])) {
-            // Login berhasil
-            $_SESSION['admin_id'] = $user['id'];
-            $_SESSION['admin_nama'] = $user['nama'];
-            
-            header("Location: admin/index.php");
-            exit();
-        } else {
-            $message = "<div class='alert alert-danger'>Username atau password salah!</div>";
-        }
+    // Validasi
+    if (empty($username) || empty($password)) {
+        $error = "Username dan password harus diisi!";
     } else {
-        $message = "<div class='alert alert-danger'>Username atau password salah!</div>";
+        // Query untuk mencari admin dengan username tersebut
+        $query = "SELECT * FROM admin WHERE username = '$username'";
+        $result = mysqli_query($conn, $query);
+        
+        if (mysqli_num_rows($result) == 1) {
+            $admin = mysqli_fetch_assoc($result);
+            
+            // Verifikasi password
+            if (password_verify($password, $admin['password'])) {
+                // Set session
+                $_SESSION['admin_id'] = $admin['id'];
+                $_SESSION['admin_username'] = $admin['username'];
+                $_SESSION['admin_nama'] = $admin['nama'];
+                
+                // Redirect ke halaman utama (bukan dashboard admin)
+                header("Location: dashboard_utama.php?status=success&msg=Login berhasil! Selamat datang, " . $admin['nama']);
+                exit;
+            } else {
+                $error = "Password salah!";
+            }
+        } else {
+            $error = "Username tidak ditemukan!";
+        }
     }
 }
 
-// Cek apakah tabel admin kosong
-$query_check = "SELECT * FROM admin";
-$result_check = mysqli_query($conn, $query_check);
-
-// Jika belum ada admin, buat admin default
-if (mysqli_num_rows($result_check) == 0) {
-    $default_username = "admin";
-    $default_password = password_hash("admin123", PASSWORD_DEFAULT);
-    $default_nama = "Administrator";
-    
-    $query_insert = "INSERT INTO admin (username, password, nama) VALUES ('$default_username', '$default_password', '$default_nama')";
-    mysqli_query($conn, $query_insert);
-    
-    $message = "<div class='alert alert-info'>Admin default telah dibuat. Username: admin, Password: admin123</div>";
-}
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -61,50 +62,60 @@ if (mysqli_num_rows($result_check) == 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin - Sistem Perpustakaan</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Sistem Perpustakaan</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Beranda</a></li>
-                    <li><a href="register.php">Daftar Anggota</a></li>
-                    <li><a href="login.php">Login Admin</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-    
-    <div class="container">
-        <?php echo $message; ?>
-        
+    <div class="container" style="max-width: 500px; margin-top: 80px;">
         <div class="card">
             <div class="card-header">
-                <h2>Login Admin</h2>
+                <h2><i class="fas fa-lock"></i> Login Admin</h2>
             </div>
+            
+            <?php if(!empty($error)): ?>
+                <div class="alert alert-danger">
+                    <?php echo $error; ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php
+            // Menampilkan pesan status jika ada
+            if (isset($_GET['status']) && isset($_GET['msg'])) {
+                if ($_GET['status'] == 'success') {
+                    echo "<div class='alert alert-success'>" . $_GET['msg'] . "</div>";
+                } else if ($_GET['status'] == 'error') {
+                    echo "<div class='alert alert-danger'>" . $_GET['msg'] . "</div>";
+                }
+            }
+            ?>
+            
             <form method="POST" action="">
                 <div>
-                    <label for="username">Username:</label>
+                    <label for="username">Username</label>
                     <input type="text" id="username" name="username" required>
                 </div>
+                
                 <div>
-                    <label for="password">Password:</label>
+                    <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <div>
-                    <button type="submit" name="login" class="btn btn-success">Login</button>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn">Login</button>
+                </div>
+                
+                <div class="text-center mt-3">
+                    Belum punya akun? <a href="register.php">Register</a>
+                </div>
+                
+                <div class="text-center mt-2">
+                    <a href="index.php">Kembali ke Beranda</a>
                 </div>
             </form>
         </div>
+        
+        <footer>
+            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan</p>
+        </footer>
     </div>
-    
-    <footer>
-        <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Sederhana</p>
-        </div>
-    </footer>
-
-    <script src="assets/js/script.js"></script>
 </body>
 </html>

@@ -3,8 +3,12 @@ session_start();
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
-// Cek login
-cek_login();
+// Cek login - menggunakan sesi login_utama alih-alih sesi admin
+if (!isset($_SESSION['admin_id'])) {
+    // Redirect ke halaman login utama jika belum login
+    header("Location: ../index.php");
+    exit();
+}
 
 // Mendapatkan daftar peminjaman aktif
 $active_loans = get_active_loans();
@@ -27,6 +31,12 @@ if (isset($_POST['kembalikan'])) {
 $today = date('Y-m-d');
 $query_update = "UPDATE peminjaman SET status = 'terlambat' WHERE tanggal_kembali < '$today' AND status = 'dipinjam'";
 mysqli_query($conn, $query_update);
+
+// Mendapatkan informasi anggota yang sedang login
+$admin_id = $_SESSION['admin_id'];
+$query_admin = "SELECT * FROM admin WHERE id = '$admin_id'";
+$result_admin = mysqli_query($conn, $query_admin);
+$admin = mysqli_fetch_assoc($result_admin);
 ?>
 
 <!DOCTYPE html>
@@ -34,19 +44,19 @@ mysqli_query($conn, $query_update);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Sistem Perpustakaan</title>
+    <title>Dashboard - Bookbidi Sigma System (BSS)</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>Dashboard Admin</h1>
+            <h1>Dashboard Perpustakaan</h1>
             <nav>
                 <ul>
-                    <li><a href="index.php">Dashboard</a></li>
+                    <li><a href="dashboard.php">Dashboard</a></li>
                     <li><a href="tambah_buku.php">Tambah Buku</a></li>
                     <li><a href="laporan.php">Laporan</a></li>
-                    <li><a href="logout.php">Logout</a></li>
+                    <li><a href="../dashboard_utama.php">Halaman Utama</a></li>
                 </ul>
             </nav>
         </div>
@@ -55,9 +65,9 @@ mysqli_query($conn, $query_update);
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h2>Selamat Datang, <?php echo $_SESSION['admin_nama']; ?></h2>
+                <h2>Selamat Datang, <?php echo $admin['nama']; ?></h2>
             </div>
-            <p>Selamat datang di panel admin Sistem Perpustakaan. Dari sini Anda dapat mengelola buku dan melihat laporan peminjaman.</p>
+            <p>Selamat datang di dashboard Sistem Perpustakaan. Dari sini Anda dapat mengelola buku dan melihat laporan peminjaman.</p>
         </div>
         
         <?php echo $message; ?>

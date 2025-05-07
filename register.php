@@ -1,35 +1,61 @@
 <?php
 session_start();
-require_once 'config/database.php';
 
-$message = '';
+// Jika sudah login, langsung redirect ke halaman utama
+if (isset($_SESSION['admin_id'])) {
+    header("Location: dashboard_utama.php");
+    exit;
+}
 
-// Proses pendaftaran anggota
-if (isset($_POST['register'])) {
+// Koneksi database
+$conn = mysqli_connect("localhost", "root", "", "perpustakaan");
+
+// Cek koneksi
+if (!$conn) {
+    die("Koneksi gagal: " . mysqli_connect_error());
+}
+
+$error = "";
+$success = "";
+
+// Jika form disubmit
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
     $nama = mysqli_real_escape_string($conn, $_POST['nama']);
-    $nis = mysqli_real_escape_string($conn, $_POST['nis']);
-    $kelas = mysqli_real_escape_string($conn, $_POST['kelas']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
     
-    // Cek apakah NIS sudah terdaftar
-    $query_check = "SELECT * FROM anggota WHERE nis = '$nis'";
-    $result_check = mysqli_query($conn, $query_check);
-    
-    if (mysqli_num_rows($result_check) > 0) {
-        $message = "<div class='alert alert-danger'>NIS sudah terdaftar!</div>";
+    // Validasi
+    if (empty($username) || empty($password) || empty($confirm_password) || empty($nama)) {
+        $error = "Semua field harus diisi!";
+    } elseif ($password != $confirm_password) {
+        $error = "Password dan konfirmasi password tidak cocok!";
     } else {
-        // Simpan data anggota
-        $query = "INSERT INTO anggota (nama, nis, kelas, email) VALUES ('$nama', '$nis', '$kelas', '$email')";
+        // Cek apakah username sudah ada
+        $check_query = "SELECT * FROM admin WHERE username = '$username'";
+        $result = mysqli_query($conn, $check_query);
         
-        if (mysqli_query($conn, $query)) {
-            $message = "<div class='alert alert-success'>Pendaftaran berhasil! Anda sekarang dapat meminjam buku menggunakan NIS Anda.</div>";
-            // Reset form setelah berhasil
-            $_POST = array();
+        if (mysqli_num_rows($result) > 0) {
+            $error = "Username sudah digunakan!";
         } else {
-            $message = "<div class='alert alert-danger'>Pendaftaran gagal: " . mysqli_error($conn) . "</div>";
+            // Hash password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insert ke database
+            $query = "INSERT INTO admin (username, password, nama) VALUES ('$username', '$hashed_password', '$nama')";
+            
+            if (mysqli_query($conn, $query)) {
+                $success = "Registrasi berhasil! Silahkan login.";
+                // Redirect ke halaman login setelah 2 detik
+                header("Refresh: 2; URL=login.php?status=success&msg=Registrasi berhasil! Silahkan login.");
+            } else {
+                $error = "Error: " . mysqli_error($conn);
+            }
         }
     }
 }
+
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -37,60 +63,67 @@ if (isset($_POST['register'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Anggota - Sistem Perpustakaan</title>
+    <title>Registrasi Admin - Sistem Perpustakaan</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Sistem Perpustakaan</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Beranda</a></li>
-                    <li><a href="register.php">Daftar Anggota</a></li>
-                    <li><a href="login.php">Login Admin</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-    
-    <div class="container">
-        <?php echo $message; ?>
-        
+    <div class="container" style="max-width: 600px; margin-top: 50px;">
         <div class="card">
             <div class="card-header">
-                <h2>Daftar Sebagai Anggota Perpustakaan</h2>
+                <h2><i class="fas fa-user-plus"></i> Registrasi Admin</h2>
             </div>
-            <form id="register-form" method="POST" action="">
-                <div>
-                    <label for="nama">Nama Lengkap:</label>
-                    <input type="text" id="nama" name="nama" value="<?php echo isset($_POST['nama']) ? $_POST['nama'] : ''; ?>" required>
+            
+            <?php if(!empty($error)): ?>
+                <div class="alert alert-danger">
+                    <?php echo $error; ?>
                 </div>
-                <div>
-                    <label for="nis">NIS (Nomor Induk Siswa):</label>
-                    <input type="text" id="nis" name="nis" value="<?php echo isset($_POST['nis']) ? $_POST['nis'] : ''; ?>" required>
+            <?php endif; ?>
+            
+            <?php if(!empty($success)): ?>
+                <div class="alert alert-success">
+                    <?php echo $success; ?>
                 </div>
+            <?php endif; ?>
+            
+            <form method="POST" action="">
                 <div>
-                    <label for="kelas">Kelas:</label>
-                    <input type="text" id="kelas" name="kelas" value="<?php echo isset($_POST['kelas']) ? $_POST['kelas'] : ''; ?>" required>
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" name="nama" required>
                 </div>
+                
                 <div>
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" value="<?php echo isset($_POST['email']) ? $_POST['email'] : ''; ?>" required>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
                 </div>
+                
                 <div>
-                    <button type="submit" name="register" class="btn btn-success">Daftar</button>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div>
+                    <label for="confirm_password">Konfirmasi Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn">Register</button>
+                </div>
+                
+                <div class="text-center mt-3">
+                    Sudah punya akun? <a href="login.php">Login</a>
+                </div>
+                
+                <div class="text-center mt-2">
+                    <a href="index.php">Kembali ke Beranda</a>
                 </div>
             </form>
         </div>
+        
+        <footer>
+            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan</p>
+        </footer>
     </div>
-    
-    <footer>
-        <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Sederhana</p>
-        </div>
-    </footer>
-
-    <script src="assets/js/script.js"></script>
 </body>
 </html>

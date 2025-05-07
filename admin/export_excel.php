@@ -1,34 +1,43 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "perpustakaan"); // Ganti sesuai database Anda
+require __DIR__ . '/../vendor/autoload.php';// pastikan ini sesuai dengan struktur folder project kamu
 
-header("Content-type: application/vnd-ms-excel");
-header("Content-Disposition: attachment; filename=laporan_pengembalian.xls");
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+$conn = new mysqli("localhost", "root", "", "perpustakaan");
+
+// Query data pengembalian
 $query = "SELECT * FROM pengembalian";
 $result = $conn->query($query);
 
-echo "<table border='1'>
-<tr>
-    <th>ID</th>
-    <th>ID Peminjaman</th>
-    <th>Tanggal Dikembalikan</th>
-    <th>Keterlambatan</th>
-    <th>Denda</th>
-    <th>Keterangan</th>
-    <th>Tanggal Dibuat</th>
-</tr>";
+// Buat spreadsheet baru
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
 
+// Header kolom
+$headers = ['ID', 'ID Peminjaman', 'Tanggal Dikembalikan', 'Keterlambatan', 'Denda', 'Keterangan', 'Tanggal Dibuat'];
+$sheet->fromArray($headers, NULL, 'A1');
+
+// Data
+$rowNumber = 2;
 while ($row = $result->fetch_assoc()) {
-    echo "<tr>
-        <td>" . $row['id'] . "</td>
-        <td>" . $row['id_peminjaman'] . "</td>
-        <td>" . $row['tanggal_dikembalikan'] . "</td>
-        <td>" . $row['keterlambatan'] . "</td>
-        <td>Rp " . number_format($row['denda'], 2, ',', '.') . "</td>
-        <td>" . $row['keterangan'] . "</td>
-        <td>" . $row['created_at'] . "</td>
-    </tr>";
+    $sheet->setCellValue("A$rowNumber", $row['id']);
+    $sheet->setCellValue("B$rowNumber", $row['id_peminjaman']);
+    $sheet->setCellValue("C$rowNumber", $row['tanggal_dikembalikan']);
+    $sheet->setCellValue("D$rowNumber", $row['keterlambatan']);
+    $sheet->setCellValue("E$rowNumber", $row['denda']);
+    $sheet->setCellValue("F$rowNumber", $row['keterangan']);
+    $sheet->setCellValue("G$rowNumber", $row['created_at']);
+    $rowNumber++;
 }
 
-echo "</table>";
+// Set header download
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="laporan_pengembalian.xlsx"');
+header('Cache-Control: max-age=0');
+
+// Tulis ke output
+$writer = new Xlsx($spreadsheet);
+$writer->save('php://output');
+exit;
 ?>

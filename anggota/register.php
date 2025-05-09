@@ -48,7 +48,7 @@ if (isset($_POST['register'])) {
                 <ul>
                     <li><a href="../dashboard_utama.php">Beranda</a></li>
                     <li><a href="register.php">Daftar Anggota</a></li>
-                    <li><a href="../admin/login.php">Dashboard Admin</a></li>
+                    <li><a href="../admin/dashboard.php">Dashboard Admin</a></li>
                 </ul>
             </nav>
         </div>

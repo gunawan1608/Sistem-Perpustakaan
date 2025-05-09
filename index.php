@@ -7,7 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Perpustakaan - Selamat Datang</title>
+    <title>Sistem Perpustakaan Skibidi</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -321,7 +321,7 @@ session_start();
 <body>
     <header>
         <div class="container">
-            <h1><i class="fas fa-book-reader"></i> Bookbidi Sigma System (BSS)</h1>
+            <h1><i class="fas fa-book-reader"></i> Sistem Perpustakaan Skibidi</h1>
             <nav>
                 <ul>
                     <?php if(isset($_SESSION['admin_id'])): ?>
@@ -337,7 +337,7 @@ session_start();
     
     <div class="container">
         <div class="hero-section">
-            <h1>Selamat Datang di Bookbidi Sigma System (BSS)</h1>
+            <h1>Selamat Datang di Sistem Perpustakaan Skibidi</h1>
             <p>Sistem manajemen perpustakaan modern yang mempermudah pengelolaan buku, anggota, dan peminjaman. Akses informasi koleksi buku dengan cepat, kelola peminjaman dengan efisien, dan dapatkan laporan lengkap.</p>
             
             <div class="cta-buttons">
@@ -373,7 +373,8 @@ session_start();
         </div>
         
         <div class="stats-section">
-            <h2 class="section-title text-center">Statistik Sistem</h2>
+            <h2 class="section-title text-center">Statistik Sistem (Gimmick Semata)</h2>
+            <br>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number">500+</div>
@@ -429,7 +430,7 @@ session_start();
         <!-- FAQ Section -->
         <div class="faq-section">
             <h2 class="section-title text-center">Pertanyaan Umum</h2>
-            
+            <br>
             <div class="faq-item">
                 <div class="faq-question">Bagaimana cara mendaftar sebagai anggota perpustakaan?</div>
                 <div class="faq-answer">

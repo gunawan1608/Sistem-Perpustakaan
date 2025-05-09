@@ -5,7 +5,10 @@ require_once '../config/database.php';
 function sanitize($data)
 {
     global $conn;
-    return mysqli_real_escape_string($conn, htmlspecialchars(trim($data)));
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return mysqli_real_escape_string($conn, $data);
 }
 
 // Fungsi untuk login
@@ -64,8 +67,10 @@ function get_all_books()
     $result = mysqli_query($conn, $query);
     $books = [];
 
-    while ($row = mysqli_fetch_assoc($result)) {
-        $books[] = $row;
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $books[] = $row;
+        }
     }
 
     return $books;
@@ -80,7 +85,74 @@ function get_book_by_id($id)
     $query = "SELECT * FROM buku WHERE id = $id";
     $result = mysqli_query($conn, $query);
 
-    return mysqli_fetch_assoc($result);
+    if ($result && mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    }
+    
+    return null;
+}
+
+// Fungsi untuk update buku
+function update_book($id, $judul, $penulis, $penerbit, $tahun_terbit, $isbn, $kategori, $gambar, $jumlah)
+{
+    global $conn;
+    $id = (int)$id;
+    
+    // Get current book data to calculate available books
+    $current_book = get_book_by_id($id);
+    if (!$current_book) {
+        return false;
+    }
+    
+    // Calculate new available books
+    $borrowed_books = $current_book['total_stok'] - $current_book['jumlah_tersedia'];
+    $new_available = $jumlah - $borrowed_books;
+    if ($new_available < 0) {
+        $new_available = 0;
+    }
+    
+    $query = "UPDATE buku SET 
+              judul = '$judul', 
+              penulis = '$penulis', 
+              penerbit = '$penerbit', 
+              tahun_terbit = $tahun_terbit, 
+              isbn = '$isbn', 
+              kategori = '$kategori', 
+              gambar = '$gambar',
+              total_stok = $jumlah,
+              jumlah_tersedia = $new_available
+              WHERE id = $id";
+              
+    return mysqli_query($conn, $query);
+}
+
+// Fungsi untuk menghapus buku
+function delete_book($id)
+{
+    global $conn;
+    $id = (int)$id;
+    
+    // Check if the book is borrowed
+    $query_check = "SELECT COUNT(*) as total FROM peminjaman WHERE id_buku = $id AND status = 'dipinjam'";
+    $result_check = mysqli_query($conn, $query_check);
+    $data_check = mysqli_fetch_assoc($result_check);
+    
+    if ($data_check['total'] > 0) {
+        return false; // Cannot delete, book is being borrowed
+    }
+    
+    // Get image filename
+    $book = get_book_by_id($id);
+    if ($book && $book['gambar'] != 'default_book.jpg') {
+        $image_path = "../assets/images/" . $book['gambar'];
+        if (file_exists($image_path)) {
+            unlink($image_path); // Delete the image file
+        }
+    }
+    
+    // Delete the book
+    $query = "DELETE FROM buku WHERE id = $id";
+    return mysqli_query($conn, $query);
 }
 
 // Fungsi untuk mendaftarkan anggota baru

@@ -155,32 +155,16 @@ function delete_book($id)
     return mysqli_query($conn, $query);
 }
 
-// Fungsi untuk mendaftarkan anggota baru
-function register_anggota($nama, $nis, $kelas, $email)
+// Fungsi untuk mendapatkan jumlah total anggota
+function get_total_members()
 {
     global $conn;
-
-    $nama = sanitize($nama);
-    $nis = sanitize($nis);
-    $kelas = sanitize($kelas);
-    $email = sanitize($email);
-
-    $query = "INSERT INTO anggota (nama, nis, kelas, email) 
-            VALUES ('$nama', '$nis', '$kelas', '$email')";
-
-    return mysqli_query($conn, $query);
-}
-
-// Fungsi untuk mendapatkan data anggota berdasarkan NIS
-function get_anggota_by_nis($nis)
-{
-    global $conn;
-    $nis = sanitize($nis);
-
-    $query = "SELECT * FROM anggota WHERE nis = '$nis'";
+    
+    $query = "SELECT COUNT(*) as total FROM anggota";
     $result = mysqli_query($conn, $query);
-
-    return mysqli_fetch_assoc($result);
+    $data = mysqli_fetch_assoc($result);
+    
+    return $data['total'];
 }
 
 // Fungsi untuk meminjam buku
@@ -259,7 +243,7 @@ function get_active_loans()
 {
     global $conn;
 
-    $query = "SELECT p.*, b.judul, a.nama, a.nis 
+    $query = "SELECT p.*, b.judul, a.nama, a.no_identitas
             FROM peminjaman p 
             JOIN buku b ON p.id_buku = b.id 
             JOIN anggota a ON p.id_anggota = a.id 
@@ -281,7 +265,7 @@ function get_loan_report()
 {
     global $conn;
 
-    $query = "SELECT p.*, b.judul, a.nama, a.nis, 
+    $query = "SELECT p.*, b.judul, a.nama, a.no_identitas, 
                 IFNULL(pk.tanggal_dikembalikan, 'Belum Kembali') as tanggal_dikembalikan,
                 IFNULL(pk.denda, 0) as denda
                 FROM peminjaman p 

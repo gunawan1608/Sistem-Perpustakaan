@@ -20,7 +20,7 @@ $query = "SELECT
         p.tanggal_kembali AS batas_kembali,
         b.judul,
         a.nama,
-        a.nis,
+        a.no_identitas,
         IFNULL(pk.tanggal_dikembalikan, 'Belum Kembali') AS tanggal_dikembalikan,
         IFNULL(pk.denda, 0) AS denda
       FROM peminjaman p
@@ -48,7 +48,7 @@ $admin = mysqli_fetch_assoc($result_admin);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Peminjaman - Sistem Perpustakaan</title>
+    <title>Laporan Peminjaman - Sistem Perpustakaan Ohara</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
@@ -107,7 +107,7 @@ $admin = mysqli_fetch_assoc($result_admin);
                     <th>Batas Kembali</th>
                     <th>Judul Buku</th>
                     <th>Nama Peminjam</th>
-                    <th>NIS</th>
+                    <th>No Identitas</th>
                     <th>Status</th>
                     <th>Tanggal Kembali</th>
                     <th>Denda</th>
@@ -132,7 +132,7 @@ $admin = mysqli_fetch_assoc($result_admin);
                             </td>
                             <td><?php echo $row['judul']; ?></td>
                             <td><?php echo $row['nama']; ?></td>
-                            <td><?php echo $row['nis']; ?></td>
+                            <td><?php echo $row['no_identitas']; ?></td>
                             <td>
                                 <?php if ($row['tanggal_dikembalikan'] == 'Belum Kembali'): ?>
                                     <?php
@@ -224,7 +224,7 @@ $admin = mysqli_fetch_assoc($result_admin);
 
 <footer>
     <div class="container">
-        <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Sederhana</p>
+        <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Ohara</p>
     </div>
 </footer>
 </body>

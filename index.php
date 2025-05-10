@@ -7,7 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Perpustakaan Skibidi</title>
+    <title>Sistem Perpustakaan Ohara</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -321,7 +321,7 @@ session_start();
 <body>
     <header>
         <div class="container">
-            <h1><i class="fas fa-book-reader"></i> Sistem Perpustakaan Skibidi</h1>
+            <h1><i class="fas fa-book-reader"></i> Sistem Perpustakaan Ohara</h1>
             <nav>
                 <ul>
                     <?php if(isset($_SESSION['admin_id'])): ?>
@@ -337,7 +337,7 @@ session_start();
     
     <div class="container">
         <div class="hero-section">
-            <h1>Selamat Datang di Sistem Perpustakaan Skibidi</h1>
+            <h1>Selamat Datang di Sistem Perpustakaan Ohara</h1>
             <p>Sistem manajemen perpustakaan modern yang mempermudah pengelolaan buku, anggota, dan peminjaman. Akses informasi koleksi buku dengan cepat, kelola peminjaman dengan efisien, dan dapatkan laporan lengkap.</p>
             
             <div class="cta-buttons">
@@ -475,7 +475,7 @@ session_start();
     <footer>
         <div class="footer-content">
             <div class="footer-info">
-                <h3>Bookbidi Sigma System (BSS)</h3>
+                <h3>Sistem Perpustakaan Ohara</h3>
                 <p>Sistem manajemen perpustakaan modern yang dikembangkan oleh Gunawan Madia Pratama, siswa SMKN 1 Jakarta jurusan Rekayasa Perangkat Lunak.</p>
                 <p>Dibangun dengan teknologi web terkini untuk memberikan pengalaman pengguna yang optimal dan manajemen data yang efisien.</p>
             </div>

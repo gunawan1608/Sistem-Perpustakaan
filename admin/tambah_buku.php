@@ -224,7 +224,7 @@ $admin = mysqli_fetch_assoc($result_admin);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $edit_mode ? 'Edit Buku' : 'Tambah Buku'; ?> - Sistem Perpustakaan</title>
+    <title><?php echo $edit_mode ? 'Edit Buku' : 'Tambah Buku'; ?> - Sistem Perpustakaan Ohara</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         .book-image {
@@ -385,7 +385,7 @@ $admin = mysqli_fetch_assoc($result_admin);
     
     <footer>
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Sederhana</p>
+            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Ohara</p>
         </div>
     </footer>
 

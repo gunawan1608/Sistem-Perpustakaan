@@ -44,7 +44,7 @@ $admin = mysqli_fetch_assoc($result_admin);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Bookbidi Sigma System (BSS)</title>
+    <title>Dashboard - Sistem Perpustakaan Ohara</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
@@ -67,7 +67,7 @@ $admin = mysqli_fetch_assoc($result_admin);
             <div class="card-header">
                 <h2>Selamat Datang, <?php echo $admin['nama']; ?></h2>
             </div>
-            <p>Selamat datang di dashboard Sistem Perpustakaan. Dari sini Anda dapat mengelola buku dan melihat laporan peminjaman.</p>
+            <p>Selamat datang di dashboard Sistem Perpustakaan Ohara. Dari sini Anda dapat mengelola buku dan melihat laporan peminjaman.</p>
         </div>
         
         <?php echo $message; ?>
@@ -82,7 +82,7 @@ $admin = mysqli_fetch_assoc($result_admin);
                         <tr>
                             <th>Judul Buku</th>
                             <th>Peminjam</th>
-                            <th>NIS</th>
+                            <th>No Identitas</th>
                             <th>Tanggal Pinjam</th>
                             <th>Batas Kembali</th>
                             <th>Status</th>
@@ -94,7 +94,7 @@ $admin = mysqli_fetch_assoc($result_admin);
                             <tr>
                                 <td><?php echo $loan['judul']; ?></td>
                                 <td><?php echo $loan['nama']; ?></td>
-                                <td><?php echo $loan['nis']; ?></td>
+                                <td><?php echo $loan['no_identitas']; ?></td>
                                 <td><?php echo date('d/m/Y', strtotime($loan['tanggal_pinjam'])); ?></td>
                                 <td><?php echo date('d/m/Y', strtotime($loan['tanggal_kembali'])); ?></td>
                                 <td>
@@ -165,7 +165,7 @@ $admin = mysqli_fetch_assoc($result_admin);
     
     <footer>
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Sederhana</p>
+            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Ohara</p>
         </div>
     </footer>
 

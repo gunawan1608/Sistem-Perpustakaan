@@ -44,11 +44,11 @@ while ($row = mysqli_fetch_assoc($result_categories)) {
 $message = '';
 if (isset($_POST['pinjam_buku'])) {
     $id_buku = $_POST['id_buku'];
-    $nis = $_POST['nis'];
+    $no_identitas = $_POST['no_identitas'];
     $tanggal_kembali = $_POST['tanggal_kembali'];
     
     // Cek apakah anggota dengan NIS tersebut terdaftar
-    $query_anggota = "SELECT * FROM anggota WHERE nis = '$nis'";
+    $query_anggota = "SELECT * FROM anggota WHERE no_identitas = '$no_identitas'";
     $result_anggota = mysqli_query($conn, $query_anggota);
     
     if (mysqli_num_rows($result_anggota) > 0) {
@@ -84,7 +84,7 @@ if (isset($_POST['pinjam_buku'])) {
             $message = "<div class='alert alert-danger'>Maaf, buku tidak tersedia untuk dipinjam.</div>";
         }
     } else {
-        $message = "<div class='alert alert-danger'>NIS tidak ditemukan. Silakan daftar terlebih dahulu.</div>";
+        $message = "<div class='alert alert-danger'>Nomor Identitas tidak ditemukan. Silakan daftar terlebih dahulu.</div>";
     }
 }
 
@@ -103,7 +103,7 @@ if (isset($_GET['status']) && isset($_GET['msg'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Perpustakaan Skibidi</title>
+    <title>Sistem Perpustakaan Ohara</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -138,13 +138,13 @@ if (isset($_GET['status']) && isset($_GET['msg'])) {
 <body>
     <header>
         <div class="container">
-            <h1>Sistem Perpustakaan Skibidi</h1>
+            <h1>Sistem Perpustakaan Ohara</h1>
             <nav>
                 <ul>
                     <li><a href="#">Beranda</a></li>
                     <li><a href="anggota/register.php">Daftar Anggota</a></li>
                     <?php if(!isset($_SESSION['admin_id'])): ?>
-                        <li><a href="admin/login.php">Dashboard Admin</a></li>
+                        <li><a href="login.php">Dashboard Admin</a></li>
                     <?php else: ?>
                         <li><a href="admin/dashboard.php">Dashboard Admin</a></li>
                     <?php endif; ?>
@@ -249,8 +249,8 @@ if (isset($_GET['status']) && isset($_GET['msg'])) {
             <form id="pinjam-form" method="POST" action="">
                 <input type="hidden" id="id_buku" name="id_buku">
                 <div>
-                    <label for="nis">NIS Anggota:</label>
-                    <input type="text" id="nis" name="nis" required>
+                    <label for="no_identitas">Nomor Identitas Anggota:</label>
+                    <input type="text" id="nis" name="no_identitas" required>
                 </div>
                 <div>
                     <label for="tanggal_kembali">Tanggal Kembali:</label>
@@ -266,7 +266,7 @@ if (isset($_GET['status']) && isset($_GET['msg'])) {
     
     <footer>
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Sederhana</p>
+            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Ohara</p>
         </div>
     </footer>
 

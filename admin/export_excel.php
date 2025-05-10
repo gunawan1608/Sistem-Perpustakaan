@@ -17,7 +17,7 @@ $sheet = $spreadsheet->getActiveSheet();
 // Header kolom
 $headers = ['ID', 'ID Peminjaman', 'Tanggal Dikembalikan', 'Keterlambatan', 'Denda', 'Keterangan', 'Tanggal Dibuat'];
 $sheet->fromArray($headers, NULL, 'A1');
-
+    
 // Data
 $rowNumber = 2;
 while ($row = $result->fetch_assoc()) {

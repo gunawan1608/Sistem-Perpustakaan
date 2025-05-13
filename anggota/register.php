@@ -286,7 +286,7 @@ $all_members = getAllMembers($conn);
 <body>
     <header>
         <div class="container">
-            <h1>Sistem Perpustakaan Ohara</h1>
+            <h1>Sistem Perpustakaan Sederhana</h1>
             <nav>
                 <ul>
                     <li><a href="../dashboard_utama.php">Beranda</a></li>

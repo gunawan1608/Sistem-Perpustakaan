@@ -122,7 +122,7 @@ mysqli_close($conn);
         </div>
         
         <footer>
-            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Ohara</p>
+            <p>&copy; <?php echo date('Y'); ?> Sistem Perpustakaan Sederhana</p>
         </footer>
     </div>
 </body>

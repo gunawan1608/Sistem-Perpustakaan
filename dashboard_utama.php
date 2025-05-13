@@ -138,7 +138,7 @@ if (isset($_GET['status']) && isset($_GET['msg'])) {
 <body>
     <header>
         <div class="container">
-            <h1>Sistem Perpustakaan Ohara</h1>
+            <h1>Sistem Perpustakaan Sederhana</h1>
             <nav>
                 <ul>
                     <li><a href="#">Beranda</a></li>

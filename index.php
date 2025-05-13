@@ -321,7 +321,7 @@ session_start();
 <body>
     <header>
         <div class="container">
-            <h1><i class="fas fa-book-reader"></i> Sistem Perpustakaan Ohara</h1>
+            <h1><i class="fas fa-book-reader"></i> Sistem Perpustakaan Sederhana</h1>
             <nav>
                 <ul>
                     <?php if(isset($_SESSION['admin_id'])): ?>
@@ -337,7 +337,7 @@ session_start();
     
     <div class="container">
         <div class="hero-section">
-            <h1>Selamat Datang di Sistem Perpustakaan Ohara</h1>
+            <h1>Selamat Datang di Sistem Perpustakaan Sederhana</h1>
             <p>Sistem manajemen perpustakaan modern yang mempermudah pengelolaan buku, anggota, dan peminjaman. Akses informasi koleksi buku dengan cepat, kelola peminjaman dengan efisien, dan dapatkan laporan lengkap.</p>
             
             <div class="cta-buttons">
